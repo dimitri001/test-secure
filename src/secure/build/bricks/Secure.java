@@ -43,55 +43,31 @@ public class Secure {
 			
 			String result= "";
 			
-			Integer nRows = null;
-			Integer nBricks = null;
-			Boolean validInput = false;
-			
-			try {
-				nRows = Integer.valueOf(strNRows);
-				nBricks = Integer.valueOf(strNBricks);
-				
-				if( nRows == null || nRows <=0 
-					|| nBricks == null || nBricks <=0){
-					result = "None";
-				}else{
-					
-					Integer totalBricks = nRows * nBricks;
-					if (totalBricks > 10000){
-						result= "Naah, too much...here's my resignation.";
-					}else{
-						validInput = true;
-						
-					}
-				}
-				
-			} catch (Exception e) {
-				//System.out.println("error - "+e);
-				System.out.println("error");
-				result =  "None - ".concat("Invalid Input");
-			}
+			WrapInteger mutNRows = new WrapInteger();
+			WrapInteger mutNBricks = new WrapInteger();
+			WrapString mutResult = new WrapString();
+			Boolean validInput = argsValidation(mutNRows, mutNBricks, strNRows, strNBricks, mutResult);
 			
 			if (validInput){
 				String wall = "";
-				String row="";
 				Boolean wallCompleted = false;
 				Integer rowCounter =0;
 				WrapInteger mutRowCounter = new WrapInteger();
-				WrapInteger mutNBricks = new WrapInteger();
+				//WrapInteger mutNBricks = new WrapInteger();
 				
 				mutRowCounter.setValue(rowCounter);
-				mutNBricks.setValue(nBricks);
+				//mutNBricks.setValue(nBricks);
 				
 				while (! wallCompleted){
 					//add row ODD
-					if (mutRowCounter.getValue() < nRows){
+					if (mutRowCounter.getValue() < mutNRows.getValue()){
 					 wall = addRowOdd(wall, mutRowCounter, mutNBricks);
 					}else {
 						wallCompleted = true;
 						break;
 					}
 					//add row EVEN
-					if (mutRowCounter.getValue() < nRows){
+					if (mutRowCounter.getValue() < mutNRows.getValue()){
 						wall = addRowEven(wall, mutRowCounter, mutNBricks);
 					}else {
 						wallCompleted = true;
@@ -101,6 +77,9 @@ public class Secure {
 				
 				result = wall;
 
+			}else{
+				
+				result = mutResult.getValue();
 			}
 			
 			return result;
@@ -141,5 +120,36 @@ public class Secure {
 			return wall;
 		}
 
+		public static Boolean argsValidation(WrapInteger mutNRows, WrapInteger mutNBricks,
+				String strNRows, String strNBricks, WrapString mutResult){
+				String result = "";
+				Boolean validInput = false;
+			try {
+				mutNRows.setValue(Integer.valueOf(strNRows));
+				mutNBricks.setValue(Integer.valueOf(strNBricks));
+				
+				if( mutNRows.getValue() == null || mutNRows.getValue() <=0 
+					|| mutNBricks.getValue() == null || mutNBricks.getValue() <=0){
+					result = "None";
+				}else{
+					
+					Integer totalBricks = mutNRows.getValue() * mutNBricks.getValue();
+					if (totalBricks > 10000){
+						result= "Naah, too much...here's my resignation.";
+					}else{
+						validInput = true;
+						
+					}
+				}
+				
+			} catch (Exception e) {
+				//System.out.println("error - "+e);
+				System.out.println("error");
+				result =  "None - ".concat("Invalid Input");
+			}
+			
+			mutResult.setValue(result);			
+			return validInput;
+		}
 	
 }
